@@ -1,0 +1,227 @@
+<script>
+
+let attempts = 0;
+
+
+// Check if someone already completed the exam
+let completed = localStorage.getItem("RI_completed");
+
+if(completed){
+
+    document.getElementById("result").innerHTML =
+
+    `
+    <span style="color:#00ff88">
+
+    EXAMINATION ALREADY COMPLETED
+
+    <br><br>
+
+    Your verification code has already been issued.
+
+    <br><br>
+
+    DM <b>Deputy Director Asa S.</b> with your assigned code.
+
+    </span>
+    `;
+
+    document.getElementById("answer").disabled = true;
+
+    document.querySelector("button").disabled = true;
+
+}
+
+
+
+// Generate unique code
+
+function generateCode(){
+
+
+    let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    let numbers = "0123456789";
+
+
+    let code = "RI-";
+
+
+    for(let i = 0; i < 3; i++){
+
+        code += letters.charAt(
+            Math.floor(Math.random() * letters.length)
+        );
+
+    }
+
+
+    code += "-";
+
+
+    for(let i = 0; i < 4; i++){
+
+        code += numbers.charAt(
+            Math.floor(Math.random() * numbers.length)
+        );
+
+    }
+
+
+    return code;
+
+
+}
+
+
+
+
+
+function checkAnswer(){
+
+
+let answer = document
+.getElementById("answer")
+.value
+.trim()
+.toUpperCase();
+
+
+
+attempts++;
+
+
+document.getElementById("attempts").innerHTML =
+"ATTEMPTS: " + attempts;
+
+
+
+
+if(answer === "THE SENATE IS IN DANGER"){
+
+
+
+let verificationCode = generateCode();
+
+
+
+// Save completion and code
+
+localStorage.setItem(
+"RI_completed",
+"true"
+);
+
+
+localStorage.setItem(
+"RI_code",
+verificationCode
+);
+
+
+
+
+
+document.getElementById("result").innerHTML =
+
+
+`
+
+<span style="color:#00ff88">
+
+
+ACCESS GRANTED
+
+
+<br><br>
+
+
+CLEARANCE LEVEL I ACHIEVED
+
+
+<br><br>
+
+
+REPUBLIC INTELLIGENCE ACADEMY APPLICATION VERIFIED
+
+
+<br><br>
+
+
+YOUR UNIQUE VERIFICATION CODE:
+
+
+<br><br>
+
+
+<span class="code">
+
+${verificationCode}
+
+</span>
+
+
+<br><br>
+
+
+DM <b>Deputy Director Asa S.</b> this code to continue your application.
+
+
+<br><br>
+
+
+<span class="warning">
+
+THIS CODE IS UNIQUE TO YOU.
+
+DO NOT SHARE IT.
+
+</span>
+
+
+</span>
+
+`;
+
+
+
+// Lock the exam
+
+document.getElementById("answer").disabled = true;
+
+
+document.querySelector("button").disabled = true;
+
+
+}
+
+
+
+
+else{
+
+
+document.getElementById("result").innerHTML =
+
+
+`
+
+<span style="color:#ff4444">
+
+ACCESS DENIED
+
+<br><br>
+
+TRANSMISSION COULD NOT BE DECRYPTED
+
+</span>
+
+`;
+
+}
+
+
+}
+
+
+</script>
