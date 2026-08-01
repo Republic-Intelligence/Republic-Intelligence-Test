@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Republic Intelligence Academy — Operation Silent Beacon</title>
+
+<style>
+:root{
+    --bg:#03070c;
+    --panel:#07121d;
+    --panel2:#0a1a29;
+    --line:#2aa9ff;
+    --cyan:#8be5ff;
+    --white:#f5fbff;
+    --green:#55ff9a;
+    --red:#ff5c6c;
+    --yellow:#ffd66b;
+    --muted:#6f9eb5;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(29,100,145,.25),transparent 35%),
+        linear-gradient(180deg,#07111b 0%,#020509 80%);
+    color:var(--cyan);
+    font-family:Consolas,"Courier New",monospace;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.022) 0px,
+            rgba(255,255,255,.022) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+    opacity:.65;
+    z-index:20;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(80,190,255,.035),
+        transparent
+    );
+    animation:sweep 7s linear infinite;
+    z-index:19;
+}
+
+@keyframes sweep{
+    from{transform:translateX(-100%)}
+    to{transform:translateX(100%)}
+}
+
+.shell{
+    width:min(1040px,100%);
+    border:1px solid rgba(56,179,255,.8);
+    background:linear-gradient(145deg,rgba(9,26,40,.97),rgba(3,8,14,.98));
+    box-shadow:
+        0 0 35px rgba(0,145,255,.28),
+        inset 0 0 35px rgba(20,120,190,.08);
+    position:relative;
+}
+
+.corner{
+    position:absolute;
+    width:26px;
+    height:26px;
+    border-color:var(--cyan);
+}
+.c1{left:-2px;top:-2px;border-left:3px solid;border-top:3px solid}
+.c2{right:-2px;top:-2px;border-right:3px solid;border-top:3px solid}
+.c3{left:-2px;bottom:-2px;border-left:3px solid;border-bottom:3px solid}
+.c4{right:-2px;bottom:-2px;border-right:3px solid;border-bottom:3px solid}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:13px 18px;
+    border-bottom:1px solid rgba(42,169,255,.55);
+    background:rgba(8,23,37,.85);
+    font-size:12px;
+    letter-spacing:1px;
+    color:#66cfff;
+}
+
+.content{padding:25px}
+
+.brand{
+    text-align:center;
+    padding:8px 0 20px;
+}
+
+.brand h1{
+    color:var(--white);
+    margin:0;
+    font-size:clamp(24px,4vw,38px);
+    letter-spacing:3px;
+    text-shadow:0 0 14px rgba(80,190,255,.6);
+}
+
+.brand p{
+    margin:9px 0 0;
+    color:#65cfff;
+    letter-spacing:2px;
+    font-size:13px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:300px minmax(0,1fr);
+    gap:20px;
+}
+
+.card{
+    border:1px solid rgba(42,169,255,.48);
+    background:rgba(5,15,24,.8);
+    box-shadow:inset 0 0 18px rgba(35,145,215,.05);
+}
+
+.card-title{
+    padding:10px 12px;
+    border-bottom:1px solid rgba(42,169,255,.38);
+    color:var(--white);
+    font-size:13px;
+    letter-spacing:1.4px;
+    background:rgba(12,37,57,.75);
+}
+
+.card-body{padding:14px}
+
+.status-line{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin:10px 0;
+    font-size:13px;
+}
+
+.status-line span:last-child{
+    color:var(--white);
+    text-align:right;
+}
+
+.progress{
+    height:8px;
+    background:#071019;
+    border:1px solid rgba(42,169,255,.4);
+    margin:10px 0 18px;
+    overflow:hidden;
+}
+
+.progress > div{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#127fbe,#72dbff);
+    box-shadow:0 0 12px #35b9ff;
+    transition:width .35s ease;
+}
+
+.story{
+    color:#c7efff;
+    line-height:1.58;
+    font-size:14px;
+    min-height:190px;
+}
+
+.story strong{color:#fff}
+.story .alert{color:var(--yellow)}
+.story .success{color:var(--green)}
+
+.phase-header{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+    margin-bottom:14px;
+}
+
+.phase-name{
+    color:var(--white);
+    font-size:18px;
+    letter-spacing:1.5px;
+}
+
+.cipher-type{
+    color:var(--yellow);
+    font-size:12px;
+    border:1px solid rgba(255,214,107,.5);
+    padding:6px 8px;
+    white-space:nowrap;
+}
+
+.brief{
+    color:#9ed8ef;
+    font-size:14px;
+    line-height:1.5;
+    margin-bottom:14px;
+}
+
+.transmission{
+    border:1px solid rgba(42,169,255,.62);
+    background:#02070c;
+    padding:22px 16px;
+    text-align:center;
+    color:var(--white);
+    font-size:clamp(18px,3.6vw,29px);
+    letter-spacing:3px;
+    line-height:1.5;
+    min-height:110px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    word-break:break-word;
+    text-shadow:0 0 10px rgba(83,196,255,.45);
+}
+
+.hint{
+    margin:12px 0;
+    color:var(--muted);
+    font-size:12px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    background:#040b12;
+    color:var(--white);
+    border:1px solid #2aa9ff;
+    font:inherit;
+    font-size:16px;
+    outline:none;
+    text-transform:uppercase;
+}
+
+input:focus{
+    box-shadow:0 0 16px rgba(42,169,255,.35);
+}
+
+button{
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    border:none;
+    background:linear-gradient(180deg,#248fd5,#12639b);
+    color:white;
+    font:inherit;
+    font-size:15px;
+    cursor:pointer;
+    letter-spacing:1.5px;
+    transition:.2s;
+}
+
+button:hover:not(:disabled){
+    background:linear-gradient(180deg,#45b9ff,#1879ba);
+    box-shadow:0 0 18px rgba(52,179,255,.35);
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+#result{
+    min-height:52px;
+    margin-top:14px;
+    text-align:center;
+    line-height:1.5;
+    font-size:14px;
+}
+
+.good{color:var(--green)}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.code{
+    color:white;
+    font-size:clamp(24px,5vw,38px);
+    letter-spacing:5px;
+    display:block;
+    margin:12px 0;
+    text-shadow:0 0 12px rgba(87,211,255,.65);
+}
+
+.boot{
+    display:none;
+    min-height:500px;
+    padding:30px;
+}
+
+.boot pre{
+    white-space:pre-wrap;
+    line-height:1.7;
+    color:#78ddff;
+}
+
+.footer{
+    margin-top:18px;
+    padding-top:12px;
+    border-top:1px solid rgba(42,169,255,.26);
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    color:#4f91ad;
+    font-size:11px;
+}
+
+.fade{animation:fade .35s ease}
+@keyframes fade{
+    from{opacity:0;transform:translateY(6px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:800px){
+    body{padding:10px;align-items:flex-start}
+    .content{padding:15px}
+    .grid{grid-template-columns:1fr}
+    .story{min-height:0}
+    .topbar{flex-direction:column}
+    .phase-header{flex-direction:column}
+    .cipher-type{white-space:normal}
+}
+</style>
+</head>
+
+<body>
+<div class="shell">
+    <span class="corner c1"></span>
+    <span class="corner c2"></span>
+    <span class="corner c3"></span>
+    <span class="corner c4"></span>
+
+    <div class="topbar">
+        <span>REPUBLIC INTELLIGENCE SECURE NETWORK</span>
+        <span>TERMINAL: ROI-ACADEMY-07</span>
+    </div>
+
+    <div id="boot" class="boot">
+        <pre id="bootLog"></pre>
+    </div>
+
+    <main id="app" class="content" style="display:none">
+        <section class="brand">
+            <h1>REPUBLIC OFFICE OF INTELLIGENCE</h1>
+            <p>ACADEMY FIELD ANALYSIS EXAMINATION</p>
+        </section>
+
+        <div class="grid">
+            <aside>
+                <section class="card">
+                    <div class="card-title">OPERATION DOSSIER</div>
+                    <div class="card-body">
+                        <div class="status-line"><span>Operation</span><span>SILENT BEACON</span></div>
+                        <div class="status-line"><span>Clearance</span><span>REPUBLIC EYES ONLY</span></div>
+                        <div class="status-line"><span>Phase</span><span id="phaseCounter">1 / 4</span></div>
+                        <div class="status-line"><span>Attempts</span><span id="attemptCount">0 / 10</span></div>
+                        <div class="progress"><div id="progressBar"></div></div>
+                        <div id="storyText" class="story"></div>
+                    </div>
+                </section>
+            </aside>
+
+            <section class="card">
+                <div class="card-title">INTERCEPT ANALYSIS CONSOLE</div>
+                <div class="card-body">
+                    <div class="phase-header">
+                        <div>
+                            <div id="phaseName" class="phase-name">PHASE I</div>
+                            <div id="transmissionId" class="hint">TRANSMISSION ID: --</div>
+                        </div>
+                        <div id="cipherType" class="cipher-type">CIPHER TYPE</div>
+                    </div>
+
+                    <div id="briefText" class="brief"></div>
+                    <div id="cipherText" class="transmission"></div>
+                    <div id="hintText" class="hint"></div>
+
+                    <input id="answerInput" autocomplete="off" spellcheck="false" placeholder="ENTER DECRYPTED MESSAGE">
+                    <button id="submitButton">SUBMIT ANALYSIS</button>
+                    <div id="result"></div>
+
+                    <div class="footer">
+                        <span>ALL INPUTS ARE LOGGED</span>
+                        <span>UNAUTHORIZED DISTRIBUTION PROHIBITED</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+const STORAGE_CODE = "ROI_SILENT_BEACON_CODE";
+const STORAGE_DONE = "ROI_SILENT_BEACON_COMPLETE";
+const MAX_ATTEMPTS = 10;
+
+const stories = [
+    {
+        title:"The Missing Courier",
+        intro:
+        "<strong>Operation Silent Beacon</strong> begins after a Republic intelligence courier disappears near the Hydian Way. " +
+        "The courier carried fragments of a Separatist command ledger. Your task is to reconstruct the chain of events before an enemy strike force reaches its target.",
+        phases:[
+            "A damaged emergency burst was recovered from the courier's shuttle. Decode it to determine what happened during the ambush.",
+            "The first message identifies a compromised listening post. A second transmission was pulled from its communications array. Decode it to discover the enemy's next movement.",
+            "Republic scouts locate a disguised Separatist relay ship. Its navigation orders are encrypted using a different system. Recover the destination.",
+            "The final fragment contains the order needed to stop the attack. Decode it and complete the intelligence picture."
+        ],
+        outro:
+        "Your completed analysis confirms that the courier survived long enough to expose a Separatist attack route. Republic forces can now intercept the strike group before it reaches the civilian convoy."
+    },
+    {
+        title:"The Ghost Fleet",
+        intro:
+        "<strong>Operation Silent Beacon</strong> has detected ships appearing and vanishing along a Republic supply corridor. " +
+        "Command suspects a concealed Separatist staging fleet. Four intercepted messages may reveal its location and objective.",
+        phases:[
+            "A coded transmission was captured from a reconnaissance droid near the supply lane. Decode the message to identify the first clue.",
+            "The clue leads to an abandoned relay station. Its last outgoing burst contains information about fleet movement.",
+            "A captured tactical droid attempted to erase its orders. One encrypted command survived. Decode it to determine the intended target.",
+            "The final command channel has activated. Recover the last message before the fleet jumps to hyperspace."
+        ],
+        outro:
+        "Your analysis exposes the Ghost Fleet's staging point and intended ambush. Republic command now has enough time to reroute the convoy and deploy a counterattack."
+    },
+    {
+        title:"The Senate Shadow",
+        intro:
+        "<strong>Operation Silent Beacon</strong> has uncovered signs that a Separatist agent is transmitting from Coruscant. " +
+        "The messages appear unrelated, but intelligence believes they form a single assassination plot.",
+        phases:[
+            "A suspicious burst was recorded beneath the Senate district. Decode it to identify the agent's immediate objective.",
+            "The first message references a hidden safehouse. A second cipher was recovered from its terminal.",
+            "The decoded safehouse record points to a weapons transfer. Analyze the next encryption to identify where the attack will occur.",
+            "The agent's final transmission has been intercepted. Decode it to reveal the order that will prevent the attack."
+        ],
+        outro:
+        "Your completed analysis uncovers the entire conspiracy. Senate security can now secure the target, arrest the agent, and trace the Separatist handler."
+    }
+];
+
+const questionPool = [
+    {type:"Caesar Shift +3", hint:"Each letter has been shifted three places forward.", cipher:"WKH FRXULHU ZDV DPEXVKHG", answer:"THE COURIER WAS AMBUSHED"},
+    {type:"Caesar Shift +3", hint:"Shift every letter backward by three.", cipher:"HQHPB VKLSV DUH PRYLQJ", answer:"ENEMY SHIPS ARE MOVING"},
+    {type:"Caesar Shift +3", hint:"The transmission uses a standard Republic training shift.", cipher:"VHFXUH WKH OLVWHQLQJ SRVW", answer:"SECURE THE LISTENING POST"},
+    {type:"Caesar Shift +3", hint:"Reverse a three-letter Caesar shift.", cipher:"SURWHFW WKH FLYLOLDQ FRQYRB", answer:"PROTECT THE CIVILIAN CONVOY"},
+
+    {type:"Atbash", hint:"A becomes Z, B becomes Y, and so on.", cipher:"GSV XLFI RVI RH ZOREV", answer:"THE COURIER IS ALIVE"},
+    {type:"Atbash", hint:"Use the reversed alphabet.", cipher:"VMVNB UOVVG RH RM YILYRMT", answer:"ENEMY FLEET IS IN ORBIT"},
+    {type:"Atbash", hint:"Mirror each letter across the alphabet.", cipher:"HZXIV GSV HVMZGV", answer:"SECURE THE SENATE"},
+    {type:"Atbash", hint:"The alphabet has been reflected.", cipher:"GSV IVOLV HSRK RH SRWWVM", answer:"THE RELAY SHIP IS HIDDEN"},
+
+    {type:"ROT13", hint:"Rotate each letter by thirteen places.", cipher:"ERCBOYVP SBEPRF NER ERNQL", answer:"REPUBLIC FORCES ARE READY"},
+    {type:"ROT13", hint:"ROT13 is its own decoder.", cipher:"GUR SERRG JVYY WHZC NG QNJA", answer:"THE FLEET WILL JUMP AT DAWN"},
+    {type:"ROT13", hint:"Apply a thirteen-letter rotation.", cipher:"CERPVRPG GUR FRANGBE", answer:"PROTECT THE SENATOR"},
+    {type:"ROT13", hint:"Decode using a half-alphabet rotation.", cipher:"FRPHER GUR FGNTRVAT CBVAG", answer:"SECURE THE STAGING POINT"},
+
+    {type:"Reverse Text", hint:"Read the entire message from right to left.", cipher:"TSOP EHT ERUCES", answer:"SECURE THE POST"},
+    {type:"Reverse Text", hint:"The character order has been completely reversed.", cipher:"NWAD TA SPIRRA TEEF EHT", answer:"THE FLEET ARRIVES AT DAWN"},
+    {type:"Reverse Text", hint:"Reverse the line exactly.", cipher:"ROTAHRT EHT TSERRA", answer:"ARREST THE TRAITOR"},
+    {type:"Reverse Text", hint:"Read backward, then preserve normal word spacing.", cipher:"TUOETUR EHT TCETORP", answer:"PROTECT THE ROUTE"},
+
+    {type:"Morse Code", hint:"Dots and dashes form letters; slashes separate words.", cipher:".-.. --- -.-. .- - . / - .... . / .-. . .-.. .- -.--", answer:"LOCATE THE RELAY"},
+    {type:"Morse Code", hint:"Use standard International Morse code.", cipher:". -. . -- -.-- / ... .... .. .--. ... / .. -. -.-. --- -- .. -. --.", answer:"ENEMY SHIPS INCOMING"},
+    {type:"Morse Code", hint:"Each slash marks a space.", cipher:"... . -.-. ..- .-. . / - .... . / -.-. --- -. ...- --- -.--", answer:"SECURE THE CONVOY"},
+    {type:"Morse Code", hint:"Decode each group individually.", cipher:".- .-. .-. . ... - / - .... . / .- --. . -. -", answer:"ARREST THE AGENT"},
+
+    {type:"Binary ASCII", hint:"Each eight-bit group represents one ASCII character.", cipher:"01000110 01001100 01000101 01000101 01010100 00100000 01000001 01010100 00100000 01000100 01000001 01010111 01001110", answer:"FLEET AT DAWN"},
+    {type:"Binary ASCII", hint:"Convert each eight-bit block into text.", cipher:"01010011 01000101 01000011 01010101 01010010 01000101 00100000 01010100 01001000 01000101 00100000 01010000 01001111 01010011 01010100", answer:"SECURE THE POST"},
+    {type:"Binary ASCII", hint:"Use standard uppercase ASCII values.", cipher:"01010010 01000101 01001100 01000001 01011001 00100000 01001001 01010011 00100000 01001000 01001001 01000100 01000100 01000101 01001110", answer:"RELAY IS HIDDEN"},
+    {type:"Binary ASCII", hint:"Spaces are encoded as 00100000.", cipher:"01010011 01010100 01001111 01010000 00100000 01010100 01001000 01000101 00100000 01000001 01010100 01010100 01000001 01000011 01001011", answer:"STOP THE ATTACK"},
+
+    {type:"NATO Phonetic", hint:"Convert each phonetic word into its first letter.", cipher:"Sierra Echo Charlie Uniform Romeo Echo / Tango Hotel Echo / Sierra Echo November Alpha Tango Echo", answer:"SECURE THE SENATE"},
+    {type:"NATO Phonetic", hint:"Each code word represents one letter.", cipher:"Foxtrot Lima Echo Echo Tango / Mike Oscar Victor India November Golf", answer:"FLEET MOVING"},
+    {type:"NATO Phonetic", hint:"Read the initials of each phonetic word.", cipher:"Papa Romeo Oscar Tango Echo Charlie Tango / Tango Hotel Echo / Charlie Oscar November Victor Oscar Yankee", answer:"PROTECT THE CONVOY"},
+    {type:"NATO Phonetic", hint:"Slashes divide words.", cipher:"Alpha Romeo Romeo Echo Sierra Tango / Tango Hotel Echo / Alpha Golf Echo November Tango", answer:"ARREST THE AGENT"}
+];
+
+const app = document.getElementById("app");
+const boot = document.getElementById("boot");
+const bootLog = document.getElementById("bootLog");
+const storyText = document.getElementById("storyText");
+const phaseCounter = document.getElementById("phaseCounter");
+const attemptCount = document.getElementById("attemptCount");
+const progressBar = document.getElementById("progressBar");
+const phaseName = document.getElementById("phaseName");
+const transmissionId = document.getElementById("transmissionId");
+const cipherType = document.getElementById("cipherType");
+const briefText = document.getElementById("briefText");
+const cipherText = document.getElementById("cipherText");
+const hintText = document.getElementById("hintText");
+const answerInput = document.getElementById("answerInput");
+const submitButton = document.getElementById("submitButton");
+const result = document.getElementById("result");
+
+let story;
+let questions = [];
+let currentPhase = 0;
+let attempts = 0;
+let locked = false;
+
+const savedCode = localStorage.getItem(STORAGE_CODE);
+const completed = localStorage.getItem(STORAGE_DONE);
+
+if(savedCode && completed === "true"){
+    showCompleted(savedCode);
+}else{
+    runBoot();
+}
+
+function runBoot(){
+    boot.style.display = "block";
+
+    const lines = [
+        "[SYSTEM] Establishing encrypted link...",
+        "[SYSTEM] Verifying Republic credential signature...",
+        "[SYSTEM] Loading intelligence examination protocols...",
+        "[SYSTEM] Retrieving Operation SILENT BEACON dossier...",
+        "[SYSTEM] Cipher libraries online...",
+        "[SYSTEM] Candidate terminal authorized.",
+        "",
+        "PRESSURE SEAL: STABLE",
+        "NETWORK STATUS: SECURE",
+        "EXAMINATION STATUS: READY"
+    ];
+
+    let index = 0;
+    const timer = setInterval(() => {
+        bootLog.textContent += lines[index] + "\n";
+        index++;
+
+        if(index >= lines.length){
+            clearInterval(timer);
+            setTimeout(() => {
+                boot.style.display = "none";
+                app.style.display = "block";
+                startExam();
+            }, 600);
+        }
+    }, 260);
+}
+
+function startExam(){
+    story = stories[Math.floor(Math.random() * stories.length)];
+    questions = chooseQuestions(4);
+    currentPhase = 0;
+    attempts = 0;
+    renderPhase();
+}
+
+function chooseQuestions(count){
+    const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
+    const chosen = [];
+    const usedTypes = new Set();
+
+    for(const q of shuffled){
+        if(!usedTypes.has(q.type)){
+            chosen.push(q);
+            usedTypes.add(q.type);
+        }
+        if(chosen.length === count) break;
+    }
+
+    while(chosen.length < count){
+        const q = shuffled[chosen.length];
+        if(!chosen.includes(q)) chosen.push(q);
+    }
+
+    return chosen;
+}
+
+function renderPhase(){
+    const q = questions[currentPhase];
+    const phaseNumber = currentPhase + 1;
+
+    phaseCounter.textContent = phaseNumber + " / 4";
+    attemptCount.textContent = attempts + " / " + MAX_ATTEMPTS;
+    progressBar.style.width = ((currentPhase / 4) * 100) + "%";
+
+    phaseName.textContent = "PHASE " + toRoman(phaseNumber);
+    transmissionId.textContent = "TRANSMISSION ID: SB-" + randomId();
+    cipherType.textContent = q.type;
+    briefText.textContent = story.phases[currentPhase];
+    cipherText.textContent = q.cipher;
+    hintText.textContent = "DECRYPTION NOTE: " + q.hint;
+
+    storyText.innerHTML =
+        "<strong>" + story.title + "</strong><br><br>" +
+        story.intro +
+        "<br><br><span class='alert'>CURRENT OBJECTIVE:</span><br>" +
+        story.phases[currentPhase];
+
+    answerInput.value = "";
+    answerInput.disabled = false;
+    submitButton.disabled = false;
+    result.innerHTML = "";
+    answerInput.focus();
+
+    cipherText.classList.remove("fade");
+    void cipherText.offsetWidth;
+    cipherText.classList.add("fade");
+}
+
+function normalize(value){
+    return value
+        .trim()
+        .toUpperCase()
+        .replace(/[.,!?;:'"]/g,"")
+        .replace(/\s+/g," ");
+}
+
+function submitAnswer(){
+    if(locked) return;
+
+    const userAnswer = normalize(answerInput.value);
+    if(!userAnswer){
+        result.innerHTML = "<span class='warn'>ENTER A DECRYPTED MESSAGE BEFORE SUBMITTING.</span>";
+        return;
+    }
+
+    attempts++;
+    attemptCount.textContent = attempts + " / " + MAX_ATTEMPTS;
+
+    if(attempts >= MAX_ATTEMPTS && userAnswer !== normalize(questions[currentPhase].answer)){
+        lockExam("Maximum failed attempts reached. Examination terminal locked.");
+        return;
+    }
+
+    if(userAnswer === normalize(questions[currentPhase].answer)){
+        currentPhase++;
+
+        if(currentPhase >= questions.length){
+            finishExam();
+        }else{
+            result.innerHTML =
+                "<span class='good'>TRANSMISSION DECRYPTED.</span><br>" +
+                "Intelligence chain updated. Loading next intercept...";
+
+            answerInput.disabled = true;
+            submitButton.disabled = true;
+            progressBar.style.width = ((currentPhase / 4) * 100) + "%";
+
+            setTimeout(renderPhase, 1100);
+        }
+    }else{
+        result.innerHTML =
+            "<span class='bad'>DECRYPTION REJECTED.</span><br>" +
+            "The message does not match the intercepted data.";
+    }
+}
+
+function finishExam(){
+    progressBar.style.width = "100%";
+    const code = generateCode();
+
+    localStorage.setItem(STORAGE_CODE, code);
+    localStorage.setItem(STORAGE_DONE, "true");
+
+    locked = true;
+    answerInput.disabled = true;
+    submitButton.disabled = true;
+
+    storyText.innerHTML =
+        "<span class='success'><strong>OPERATION COMPLETE</strong></span><br><br>" +
+        story.outro;
+
+    phaseCounter.textContent = "4 / 4";
+    phaseName.textContent = "FINAL CLEARANCE";
+    cipherType.textContent = "ANALYSIS COMPLETE";
+    briefText.textContent = "Your reconstructed intelligence report has been accepted by Republic Intelligence Command.";
+    cipherText.innerHTML =
+        "<div>" +
+        "<span style='font-size:15px;color:#7fdcff'>UNIQUE VERIFICATION CODE</span>" +
+        "<span class='code'>" + code + "</span>" +
+        "</div>";
+    hintText.textContent = "This code has been saved to this browser and cannot be regenerated through the examination button.";
+
+    result.innerHTML =
+        "<span class='good'>APPLICATION EXAMINATION PASSED.</span><br><br>" +
+        "DM <b>Deputy Director Asa S.</b> this code to continue your application.<br>" +
+        "<span class='warn'>Do not share the code with another applicant.</span>";
+}
+
+function showCompleted(code){
+    app.style.display = "block";
+    boot.style.display = "none";
+    locked = true;
+
+    phaseCounter.textContent = "COMPLETE";
+    attemptCount.textContent = "LOCKED";
+    progressBar.style.width = "100%";
+
+    storyText.innerHTML =
+        "<span class='success'><strong>EXAMINATION ALREADY COMPLETED</strong></span><br><br>" +
+        "This browser has already received a Republic Intelligence verification code.";
+
+    phaseName.textContent = "FINAL CLEARANCE";
+    transmissionId.textContent = "STATUS: VERIFIED";
+    cipherType.textContent = "CODE ISSUED";
+    briefText.textContent = "Your original verification code is displayed below.";
+    cipherText.innerHTML =
+        "<div><span style='font-size:15px;color:#7fdcff'>VERIFICATION CODE</span>" +
+        "<span class='code'>" + code + "</span></div>";
+    hintText.textContent = "Clearing browser storage may bypass this local lock. For true account-level security, a server-backed system is required.";
+    answerInput.disabled = true;
+    submitButton.disabled = true;
+    result.innerHTML =
+        "DM <b>Deputy Director Asa S.</b> this code to continue your application.";
+}
+
+function lockExam(message){
+    locked = true;
+    answerInput.disabled = true;
+    submitButton.disabled = true;
+    result.innerHTML =
+        "<span class='bad'>TERMINAL LOCKED.</span><br>" + message;
+}
+
+function generateCode(){
+    const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const numbers = "23456789";
+    let code = "ROI-";
+
+    for(let i=0;i<4;i++){
+        code += letters[Math.floor(Math.random()*letters.length)];
+    }
+
+    code += "-";
+
+    for(let i=0;i<6;i++){
+        code += numbers[Math.floor(Math.random()*numbers.length)];
+    }
+
+    return code;
+}
+
+function randomId(){
+    return Math.floor(1000 + Math.random()*9000);
+}
+
+function toRoman(value){
+    return ["I","II","III","IV"][value-1] || value;
+}
+
+submitButton.addEventListener("click", submitAnswer);
+
+answerInput.addEventListener("keydown", event => {
+    if(event.key === "Enter"){
+        submitAnswer();
+    }
+});
+})();
+</script>
+</body>
+</html>
